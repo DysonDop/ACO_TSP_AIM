@@ -38,6 +38,9 @@ class EnhancedACO:
                     if self.noise_level > 0:
                         noise = random.uniform(-self.noise_level, self.noise_level)
                         dist *= (1 + noise)
+                    # Fix zero-distance bug
+                    if dist == 0:
+                        dist = 1e-10
                     distances[i][j] = dist
         return distances
 
