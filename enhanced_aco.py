@@ -3,7 +3,7 @@ import random
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-
+import matplotlib.image as mpimg
 
 class EnhancedACO:
     def __init__(self, nodes, mode='ACS', colony_size=10, steps=100, alpha=1.0, beta=3.0, rho=0.1,
@@ -119,14 +119,35 @@ class EnhancedACO:
 
     def plot_best_tour(self):
         tour = self.global_best_tour + [self.global_best_tour[0]]
-        x = [self.nodes[i][0] for i in tour]
-        y = [self.nodes[i][1] for i in tour]
-        plt.figure(figsize=(8, 6))
-        plt.plot(x, y, marker='o')
-        plt.title(f'Best Tour ({self.mode}) - Distance: {round(self.global_best_distance, 2)}')
-        plt.xlabel('X')
-        plt.ylabel('Y')
+        x = [self.nodes[i][1] for i in tour]  # Longitude
+        y = [self.nodes[i][0] for i in tour]  # Latitude
+
+        plt.figure(figsize=(10, 6))
+
+        # Load and display background map
+        try:
+            img = mpimg.imread('assets/map.png')
+            min_lon = min(x)
+            max_lon = max(x)
+            min_lat = min(y)
+            max_lat = max(y)
+            padding = 2  # degrees of padding
+            plt.imshow(
+                img,
+                extent = [min_lon - padding, max_lon + padding, min_lat - padding, max_lat + padding],
+                alpha=0.6
+            )
+        except FileNotFoundError:
+            print("⚠️ Background map not found. Showing tour without map.")
+
+        # Plot the path
+        plt.plot(x, y, marker='o', linestyle='-', color='blue', linewidth=2)
+        plt.scatter(x, y, color='red', s=40)
+        plt.title(f'ACO Best Tour ({self.mode}) - Distance: {round(self.global_best_distance, 2)}')
+        plt.xlabel('Longitude')
+        plt.ylabel('Latitude')
         plt.grid(True)
+        plt.savefig('results/best_tour.png', dpi=300)
         plt.show()
 
     def plot_convergence(self):
@@ -136,4 +157,29 @@ class EnhancedACO:
         plt.xlabel('Iteration')
         plt.ylabel('Best Distance')
         plt.grid(True)
+        plt.savefig('results/convergence_plot.png', dpi=300)
         plt.show()
+
+        def plot_best_tour(self):
+            tour = self.global_best_tour + [self.global_best_tour[0]]
+            x = [self.nodes[i][1] for i in tour]  # Longitude
+            y = [self.nodes[i][0] for i in tour]  # Latitude
+
+            plt.figure(figsize=(10, 6))
+
+            # Load and display background map
+            try:
+                img = mpimg.imread('assets/map.png')
+                plt.imshow(img, extent=[-180, 180, -90, 90],
+                           alpha=0.6)  # Adjust extent to match your scaled coordinates
+            except FileNotFoundError:
+                print("⚠️ Background map not found. Showing tour without map.")
+
+            # Plot the path
+            plt.plot(x, y, marker='o', linestyle='-', color='blue', linewidth=2)
+            plt.scatter(x, y, color='red', s=40)
+            plt.title(f'ACO Best Tour ({self.mode}) - Distance: {round(self.global_best_distance, 2)}')
+            plt.xlabel('Longitude')
+            plt.ylabel('Latitude')
+            plt.grid(True)
+            plt.show()
