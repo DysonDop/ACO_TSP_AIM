@@ -134,16 +134,23 @@ class EnhancedACO:
             padding = 2  # degrees of padding
             plt.imshow(
                 img,
-                extent = [min_lon - padding, max_lon + padding, min_lat - padding, max_lat + padding],
+                extent=[min_lon - padding, max_lon + padding, min_lat - padding, max_lat + padding],
                 alpha=0.6
             )
         except FileNotFoundError:
             print("⚠️ Background map not found. Showing tour without map.")
 
-        # Plot the path
-        plt.plot(x, y, marker='o', linestyle='-', color='blue', linewidth=2)
-        plt.scatter(x, y, color='red', s=40)
-        plt.title(f'ACO Best Tour ({self.mode}) - Distance: {round(self.global_best_distance, 2)}')
+        # Plot path first
+        plt.plot(x, y, linestyle='-', color='blue', linewidth=2)
+        plt.scatter(x, y, color='red', s=40, label='Cities')
+
+        # Mark start and end
+        plt.plot(x[0], y[0], marker='o', markersize=12, markerfacecolor='white', markeredgecolor='green',
+                 markeredgewidth=3, label='Start')
+        plt.plot(x[0], y[0], marker='o', markersize=6, markerfacecolor='green')
+
+        plt.legend()
+        plt.title(f'ACO Best Tour ({self.mode}) - Distance: {round(self.global_best_distance, 2)} km')
         plt.xlabel('Longitude')
         plt.ylabel('Latitude')
         plt.grid(True)
